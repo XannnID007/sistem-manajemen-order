@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Pangkalan LPG')</title>
+    <title>@yield('title', \App\Models\Setting::get()->pangkalan_name)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -26,37 +26,50 @@
             background-color: rgba(255, 255, 255, 0.15);
             border-left: 4px solid white;
         }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 0.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            z-index: 50;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
     </style>
 </head>
 
 <body class="bg-gray-100">
+    @php
+        $setting = \App\Models\Setting::get();
+    @endphp
+
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
         <aside id="sidebar"
             class="fixed inset-y-0 left-0 z-30 w-64 bg-gradient-to-b from-green-600 to-green-700 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
             <div class="flex flex-col h-full">
                 <!-- Logo -->
-                <div class="flex items-center justify-center h-16 bg-green-800 bg-opacity-50">
-                    <i class="fas fa-gas-pump text-2xl mr-2"></i>
-                    <span class="text-lg font-bold">Pangkalan LPG</span>
+                <div class="flex items-center justify-center h-16 bg-green-800 bg-opacity-50 px-4">
+                    @if ($setting->logo)
+                        <img src="{{ asset('storage/' . $setting->logo) }}" alt="{{ $setting->pangkalan_name }}"
+                            class="h-12 w-12 object-contain mr-2 rounded-full">
+                    @else
+                        <i class="fas fa-gas-pump text-2xl mr-2"></i>
+                    @endif
+                    <span class="text-lg font-bold truncate">{{ $setting->pangkalan_name }}</span>
                 </div>
-
-                <!-- User Info -->
-                @auth
-                    <div class="px-4 py-4 bg-green-800 bg-opacity-30">
-                        <div class="flex items-center">
-                            <div
-                                class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-green-600 font-bold">
-                                {{ substr(auth()->user()->name, 0, 1) }}
-                            </div>
-                            <div class="ml-3 flex-1">
-                                <p class="text-sm font-semibold">{{ auth()->user()->name }}</p>
-                                <p class="text-xs text-green-200">
-                                    {{ auth()->user()->isAdmin() ? 'Administrator' : 'Pelanggan' }}</p>
-                            </div>
-                        </div>
-                    </div>
-                @endauth
 
                 <!-- Navigation -->
                 <nav class="flex-1 px-3 py-4 overflow-y-auto">
@@ -106,15 +119,6 @@
                         @endif
                     @endauth
                 </nav>
-
-                <!-- Logout -->
-                <div class="px-3 py-4 border-t border-green-500 border-opacity-30">
-                    <button onclick="confirmLogout()"
-                        class="sidebar-link flex items-center px-3 py-2.5 rounded-lg w-full text-sm hover:bg-red-500 hover:bg-opacity-20">
-                        <i class="fas fa-sign-out-alt w-5"></i>
-                        <span class="ml-3">Keluar</span>
-                    </button>
-                </div>
             </div>
         </aside>
 
@@ -122,16 +126,44 @@
         <div class="flex-1 flex flex-col lg:ml-64">
             <!-- Top Bar -->
             <header class="bg-white shadow-sm h-16 flex items-center justify-between px-4 lg:px-6">
-                <button onclick="toggleSidebar()" class="lg:hidden text-gray-600">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-                <h1 class="text-lg font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h1>
-                <div class="flex items-center space-x-3">
-                    <span class="text-sm text-gray-600 hidden sm:block">{{ now()->format('d M Y') }}</span>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-lg font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h1>
+                </div>
+
+                <div class="flex items-center space-x-4">
                     @auth
-                        <div
-                            class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                            {{ substr(auth()->user()->name, 0, 1) }}
+                        <!-- Profile Dropdown -->
+                        <div class="dropdown">
+                            <button onclick="toggleDropdown(event)"
+                                class="flex items-center space-x-2 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors">
+                                <div
+                                    class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <p class="text-sm font-semibold text-gray-800">{{ auth()->user()->name }}</p>
+                                    <p class="text-xs text-gray-500">
+                                        {{ auth()->user()->isAdmin() ? 'Administrator' : 'Pelanggan' }}
+                                    </p>
+                                </div>
+                                <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div id="dropdownMenu" class="dropdown-menu">
+                                <div class="px-4 py-3 border-b border-gray-100">
+                                    <p class="text-sm font-semibold text-gray-800">{{ auth()->user()->name }}</p>
+                                    <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
+                                </div>
+                                <button onclick="confirmLogout()"
+                                    class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2 transition-colors">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Keluar</span>
+                                </button>
+                            </div>
                         </div>
                     @endauth
                 </div>
@@ -182,6 +214,20 @@
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
         }
+
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('dropdownMenu');
+            if (dropdown && dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            }
+        });
 
         function confirmLogout() {
             Swal.fire({

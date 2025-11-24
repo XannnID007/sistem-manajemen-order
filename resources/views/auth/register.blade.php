@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Register - Pangkalan LPG</title>
+    <title>Register - {{ $setting->pangkalan_name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -42,12 +42,19 @@
             <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
                 <!-- Header -->
                 <div class="bg-white px-6 pt-6 pb-5 text-center border-b">
-                    <div
-                        class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-full mb-2 shadow-lg">
-                        <i class="fas fa-user-plus text-white text-xl"></i>
-                    </div>
-                    <h2 class="text-xl font-bold text-gray-800">Daftar Akun Baru</h2>
-                    <p class="text-gray-500 text-xs mt-1">Lengkapi formulir pendaftaran</p>
+                    @if ($setting->logo)
+                        <div class="mb-2 flex justify-center">
+                            <img src="{{ asset('storage/' . $setting->logo) }}" alt="{{ $setting->pangkalan_name }}"
+                                class="h-14 w-14 object-contain">
+                        </div>
+                    @else
+                        <div
+                            class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-full mb-2 shadow-lg">
+                            <i class="fas fa-user-plus text-white text-xl"></i>
+                        </div>
+                    @endif
+                    <h2 class="text-xl font-bold text-gray-800">{{ $setting->pangkalan_name }}</h2>
+                    <p class="text-gray-500 text-xs mt-1">Daftar Akun Baru</p>
                 </div>
 
                 <!-- Form -->

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,7 +12,8 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
-        return view('auth.login');
+        $setting = Setting::get();
+        return view('auth.login', compact('setting'));
     }
 
     public function login(Request $request)
@@ -37,7 +39,8 @@ class AuthController extends Controller
 
     public function showRegister()
     {
-        return view('auth.register');
+        $setting = Setting::get();
+        return view('auth.register', compact('setting'));
     }
 
     public function register(Request $request)
