@@ -13,7 +13,13 @@ class AuthController extends Controller
     public function showLogin()
     {
         $setting = Setting::get();
-        return view('auth.login', compact('setting'));
+        return view('auth.login', compact('setting'))->with('isLogin', true);
+    }
+
+    public function showRegister()
+    {
+        $setting = Setting::get();
+        return view('auth.login', compact('setting'))->with('isLogin', false);
     }
 
     public function login(Request $request)
@@ -35,12 +41,6 @@ class AuthController extends Controller
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->onlyInput('email');
-    }
-
-    public function showRegister()
-    {
-        $setting = Setting::get();
-        return view('auth.register', compact('setting'));
     }
 
     public function register(Request $request)
