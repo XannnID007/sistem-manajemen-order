@@ -40,12 +40,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/report/print', [AdminController::class, 'printReport'])->name('report.print');
         Route::get('/report/excel', [AdminController::class, 'exportExcel'])->name('report.excel');
 
-        // User Management
+        // User Management - Hanya Index, Show, dan Delete
         Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
-        Route::get('/users/create', [\App\Http\Controllers\UserController::class, 'create'])->name('users.create');
-        Route::post('/users', [\App\Http\Controllers\UserController::class, 'store'])->name('users.store');
-        Route::get('/users/{user}/edit', [\App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
-        Route::put('/users/{user}', [\App\Http\Controllers\UserController::class, 'update'])->name('users.update');
+        Route::get('/users/{user}', [\App\Http\Controllers\UserController::class, 'show'])->name('users.show');
         Route::delete('/users/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
 
         Route::get('/settings', [AdminController::class, 'settings'])->name('settings');

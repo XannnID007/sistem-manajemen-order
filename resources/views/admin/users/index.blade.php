@@ -20,11 +20,6 @@
                         placeholder="Cari nama, NIK, atau telepon..."
                         class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm placeholder-gray-400">
                 </form>
-
-                <a href="{{ route('admin.users.create') }}"
-                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow-lg shadow-emerald-500/30 transition-all transform active:scale-95 text-sm flex items-center justify-center gap-2 whitespace-nowrap">
-                    <i class="fas fa-user-plus"></i> Tambah Baru
-                </a>
             </div>
         </div>
     </div>
@@ -96,10 +91,10 @@
 
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <div class="flex justify-center items-center gap-2">
-                                    <a href="{{ route('admin.users.edit', $user) }}"
-                                        class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 hover:text-amber-700 transition-all flex items-center justify-center"
-                                        title="Edit Data">
-                                        <i class="fas fa-pen text-xs"></i>
+                                    <a href="{{ route('admin.users.show', $user) }}"
+                                        class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-all flex items-center justify-center"
+                                        title="Lihat Detail">
+                                        <i class="fas fa-eye text-xs"></i>
                                     </a>
 
                                     <button onclick="confirmDelete({{ $user->id }}, '{{ $user->name }}')"
@@ -119,8 +114,8 @@
                                         <i class="fas fa-users-slash text-3xl"></i>
                                     </div>
                                     <p class="text-gray-500 font-medium">Data pelanggan tidak ditemukan.</p>
-                                    <p class="text-xs text-gray-400 mt-1">Coba kata kunci lain atau tambahkan pelanggan
-                                        baru.</p>
+                                    <p class="text-xs text-gray-400 mt-1">Coba kata kunci lain atau pelanggan belum
+                                        terdaftar.</p>
                                 </div>
                             </td>
                         </tr>
